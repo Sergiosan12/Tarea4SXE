@@ -139,7 +139,7 @@ http://localhost:8000/info.php
   
 </details>
 
-## 2. Instalar wordpress en el contenedor.
+## 2. Instalar wordpress en el contenedor y comprobar que puedo acceder.
 
 <details>
 
@@ -310,3 +310,4 @@ Desde aquí se configura toda la página con el nombre de sitio de la página,us
 Y de esta forma ya tendríamos la página de WordPress lista para trabajar en ella.
 
 </details>
+
