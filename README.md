@@ -244,6 +244,7 @@ Comprobación de si puedo acceder a WordPress desde el navegador con la IP y el 
 <summary>Configuración de la base de datos</summary>
 <br>
 Primero entramos en la base de datos:
+
 ```bash
 mysql -u root
 ```
@@ -264,5 +265,48 @@ FLUSH PRIVILEGES;
 quit
 ```
 ![BD](https://github.com/user-attachments/assets/9721787d-fdc2-48b7-be80-0ade16df7300)
+
+</details>
+
+<details>
+
+<summary>Configurar WordPress para acceder a la Base de Datos</summary>
+<br>
+Primero se copia el archivo de configuración:
+
+```bash
+cp /srv/www/wordpress/wp-config-sample.php /srv/www/wordpress/wp-config.php
+```
+Luego se establecen los datos en el archivo wp_config.php
+
+
+```bash
+# Reemplaza el nombre de la base de datos
+sed -i 's/database_name_here/wordpress/' /srv/www/wordpress/wp-config.php
+
+# Reemplaza el nombre del usuario
+sudo -u www-data sed -i 's/username_here/wordpress/' /srv/www/wordpress/wp-config.php
+
+# Reemplaza la contraseña
+sed -i 's/password_here/<your-password>/' /srv/www/wordpress/wp-config.php
+```
+A continucación se abre el archivo con nano:
+
+```bash
+nano /srv/www/wordpress/wp-config.php
+```
+
+Se cambian las claves por unas generadas aleatoriamente en https://api.wordpress.org/secret-key/1.1/salt/. Se cambian las siguientes líneas por las de la página:
+
+![ss](https://github.com/user-attachments/assets/c61e0e9a-dafe-40d0-b6ae-bf0472c962c8)
+
+Por último se entra en el enlace de localhost en el navegador
+
+```bash
+http://localhost:8000/wp-admin/
+```
+Desde aquí se configura toda la página con el nombre de sitio de la página,usuario, etc.
+
+Y de esta forma ya tendríamos la página de WordPress lista para trabajar en ella.
 
 </details>
