@@ -135,8 +135,134 @@ http://localhost:8000/info.php
 
 ![Captura de pantalla de 2024-10-24 13-03-08](https://github.com/user-attachments/assets/38131264-27ed-4172-afad-c18acdd3589b)
 
-
   </details>
   
 </details>
 
+## 2. Instalar wordpress en el contenedor.
+
+<details>
+
+  <summary>Instalación dependencias de Wordpress</summary>
+
+  Ejecutamos el siguiente comando con todas las dependencias(algunas ya están instaladas de apartados anteriores, pero se puede ejecutar todo el script sin problema).
+
+  ```bash
+apt update
+apt install apache2 \
+  ghostscript \
+  libapache2-mod-php \
+  mysql-server \
+  php \
+  php-bcmath \
+  php-curl \
+  php-imagick \
+  php-intl \
+  php-json \
+  php-mbstring \
+  php-mysql \
+  php-xml \
+  php-zip
+```
+
+</details>
+
+<details>
+
+  <summary>Preparación y descarga WordPress</summary>
+
+  ```bash
+# Primero se crea un directorio
+mkdir -p /srv/www
+#Se cambia el acceso al usuario
+chown www-data: /srv/www
+#Instalar curl
+apt install curl
+#Descargar WordPress 
+curl https://wordpress.org/latest.tar.gz | tar zx -C /srv/www
+```
+Salida por pantalla:
+
+![Curl](https://github.com/user-attachments/assets/60db4946-d9bb-4d62-b467-bc76312d348e)
+
+</details>
+
+<details>
+
+<summary>Configurar Apache</summary>
+
+Instalar nano:
+```bash
+apt install nano
+```
+
+Crear un documento de la siguiente manera
+```bash
+nano etc/apache2/sites-available/wordpress.conf
+```
+Y dentro se escriben las siguientes dependencias:
+```bash
+<VirtualHost *:80>
+    DocumentRoot /srv/www/wordpress
+    <Directory /srv/www/wordpress>
+        Options FollowSymLinks
+        AllowOverride Limit Options FileInfo
+        DirectoryIndex index.php
+        Require all granted
+    </Directory>
+    <Directory /srv/www/wordpress/wp-content>
+        Options FollowSymLinks
+        Require all granted
+    </Directory>
+</VirtualHost>
+```
+
+Y por último se habilita la página:
+
+
+```bash
+# Habilitar el sitio
+a2ensite wordpress
+# Habilitar la URL de reescritura
+a2enmod rewrite
+# Deshabilitar el predeterminado
+a2dissite 000-default
+
+# Puede que entre los pasos se necesite hacer lo siguiente:
+service apache2 reload
+service apache2 restart
+```
+
+Comprobación de si puedo acceder a WordPress desde el navegador con la IP y el puerto añadiéndole /wp-admin/setup-config.php:
+
+![Word](https://github.com/user-attachments/assets/8515f0c3-d8ee-4ebb-bb0d-2cdaf87d3219)
+
+</details>
+
+<details>
+
+<summary>Configuración de la base de datos</summary>
+<br>
+Primero entramos en la base de datos:
+```bash
+mysql -u root
+```
+
+Una vez dentro ejecutamos los siguientes comandos:
+```bash
+# Crear la base de datos
+CREATE DATABASE wordpress;
+# Crear usuario con la contraseña
+CREATE USER wordpress@localhost IDENTIFIED BY '<your-password>';
+# Dar permisos
+GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER
+    -> ON wordpress.*
+    -> TO wordpress@localhost;
+# Actualizar privilegios
+FLUSH PRIVILEGES;
+# Salir de la base de datos
+quit
+```
+![BD](https://github.com/user-attachments/assets/9721787d-fdc2-48b7-be80-0ade16df7300)
+
+</details>
